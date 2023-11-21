@@ -17,9 +17,10 @@ const FeaturedProducts = ({type}) => {
             <p> Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dicta omnis nulla, dolor aliquid possimus officiis, cupiditate adipisci sint nobis ratione vel! Asperiores ad delectus cumque omnis nemo provident veniam. Cum!</p>
         </div>
         <div className="bottom">
-            {data?.map(item=>(
+            {error ? 'algo salio mal' : (loading ? 'loading' :
+            data?.map(item=>(
                 <Card item={item} key={item.id} />
-            ))}
+            )))}
         </div>
     </div>
   )

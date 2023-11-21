@@ -3,40 +3,56 @@ import './Product.scss'
 import AddShoppingCartOutlinedIcon from '@mui/icons-material/AddShoppingCartOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import BalanceIcon from '@mui/icons-material/Balance';
-
-import product1 from '../../../public/img/product1.png'
-import product2 from '../../../public/img/product2.png'
-import product3 from '../../../public/img/product3.png'
 import { useState } from 'react'
+import useFetch from '../../hooks/useFetch';
+import { useParams } from 'react-router-dom';
 
 const Product = () => {
-
-  const[selectedImg, setSelectedImg] = useState(0)
-
+  const id = useParams().id;
+  const[selectedImg, setSelectedImg] = useState('img')
   const[quantity, setQuantity] = useState(1)
 
-  const images = [
-    product1,
-    product2,
-    product3
-  ]
+  const {data, loading, error } = useFetch(
+    `/products/${id}?populate=*`
+  )
 
   return (
     <div className='product'>
+      { loading ? 'loading' : (
+      <>
       <div className="left">
         <div className="images">
-          <img src={images[0]} alt="" onClick={e => setSelectedImg(0)}/>
-          <img src={images[1]} alt="" onClick={e => setSelectedImg(1)}/>
-          <img src={images[2]} alt="" onClick={e => setSelectedImg(2)}/>
+
+          <img 
+            src={import.meta.env.VITE_REACT_APP_UPLOAD_URL + data?.attributes?.img?.data?.attributes?.url} 
+            alt="" 
+            onClick={e => setSelectedImg('img')}
+          />
+
+          <img 
+            src={import.meta.env.VITE_REACT_APP_UPLOAD_URL + data?.attributes?.img2?.data?.attributes?.url} 
+            alt="" 
+            onClick={e => setSelectedImg('img2')}
+          />
+
+        {data?.attributes?.img3?.data?.attributes?.url && (
+          <img
+            src={import.meta.env.VITE_REACT_APP_UPLOAD_URL + data?.attributes?.img3?.data?.attributes?.url}
+            alt=""
+            onClick={e => setSelectedImg('img3')}
+          />)
+        }
+
         </div>
         <div className="mainImg">
-          <img src={images[selectedImg]} alt="" />
+          <img src={import.meta.env.VITE_REACT_APP_UPLOAD_URL + data?.attributes[selectedImg]?.data?.attributes?.url} alt="" />
         </div>
       </div>
+
       <div className="right">
-        <h1> Title </h1>
-        <span className='price'> $300 </span>
-        <p> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officiis aperiam inventore minima deserunt iusto mollitia illo in similique consectetur quod porro vel expedita magnam non eius adipisci, harum esse soluta?</p>
+        <h1> {data?.attributes?.title} </h1>
+        <span className='price'> ${data?.attributes?.price} </span>
+        <p> {data?.attributes?.description} </p>
         <div className="quantity">
           <button onClick={() => setQuantity( (prev) => prev === 1 ? 1 : prev - 1 )}> - </button>
           {quantity}
@@ -70,6 +86,8 @@ const Product = () => {
         </div>
  
       </div>
+      </>
+      )}
     </div>
   )
 }
